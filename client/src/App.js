@@ -21,7 +21,7 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.getPlayers('http://localhost:8080/1_player_db.json')
+        this.getPlayers('/proj/pergame')
     }
 
     render() {

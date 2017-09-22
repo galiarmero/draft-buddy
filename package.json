@@ -3,13 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently --kill-others  \"set PORT=3001 & node ./bin/www\" \"cd client & yarn start\"",
-    "poststart": "cd client & yarn start",
+    "start": "set PORT=3001 & node ./bin/www",
     "postinstall": "cd client & yarn install"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
-    "concurrently": "^3.5.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
