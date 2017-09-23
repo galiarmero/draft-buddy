@@ -32,4 +32,28 @@ router.get('/last/zscores', function(req, res, next) {
     res.json(data)
 });
 
+router.get('/removed_players', function(req, res, next) {
+    var data = JSON.parse(fs.readFileSync('data/removed_players.json', 'utf8'));
+    res.json(data)
+});
+
+router.post('/removed_players', function(req, res, next) {
+    var data = JSON.parse(fs.readFileSync('data/removed_players.json', 'utf8'));
+    data.push(req.body.player_id);
+    fs.writeFileSync('data/removed_players.json', JSON.stringify(data));
+    res.status(204).end();
+});
+
+router.get('/drafted_players', function(req, res, next) {
+    var data = JSON.parse(fs.readFileSync('data/drafted_players.json', 'utf8'));
+    res.json(data)
+});
+
+router.post('/drafted_players', function(req, res, next) {
+    var data = JSON.parse(fs.readFileSync('data/drafted_players.json', 'utf8'));
+    data.push(req.body);
+    fs.writeFileSync('data/drafted_players.json', JSON.stringify(data));
+    res.status(204).send(JSON.stringify(data));
+});
+
 module.exports = router;
