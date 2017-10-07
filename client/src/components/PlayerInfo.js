@@ -1,7 +1,9 @@
 import React from 'react';
 import PlayersTable from './PlayersTable';
 
-const PlayerInfo = ({ player, onPlayerDraft, onPlayerRemoval, maxVal, minVal }) => {
+const PlayerInfo = (props) => {
+    const player = props.player;
+
     const columns = [
             { key: 'rank',  label: 'RNK' },
             { key: 'name',  label: 'NAME' },
@@ -25,10 +27,11 @@ const PlayerInfo = ({ player, onPlayerDraft, onPlayerRemoval, maxVal, minVal }) 
                 <PlayersTable
                     label={player.name}
                     players={[player]}
-                    removedPlayers={[]}
+                    onPlayerDraft={props.onPlayerDraft}
+                    onPlayerRemoval={props.onPlayerRemoval}
                     columns={columns}
-                    maxVal={maxVal}
-                    minVal={minVal} />
+                    maxVal={props.max}
+                    minVal={props.min} />
             </div>
         </div>
     );

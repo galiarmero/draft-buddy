@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PlayersTable from './components/PlayersTable';
 import Menu from './components/Menu';
 import PlayerInfo from './components/PlayerInfo';
+import AvailablePlayers from './components/AvailablePlayers';
+import DraftedPlayers from './components/DraftedPlayers';
 import axios from 'axios';
 import NProgress from 'nprogress';
 import './App.css';
@@ -13,15 +15,17 @@ class App extends Component {
         super(props);
 
         this.state = {
-            players: [],
-            draftedPlayers: [],
-            removedPlayers: [],
+            data: {
+                players: [],
+                min: [],
+                max: []                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+            },
+            draftedPlayerIds: [],
+            removedPlayerIds: [],
             selectedMenu: 'proj',
             selectedRankBy: 'pergame',
             url: '/proj/pergame',
-            selectedPlayer: {},
-            min: 0,
-            max: 0
+            selectedPlayer: {}
         }
 
         this.onPlayerDraft = this.onPlayerDraft.bind(this);
@@ -29,30 +33,14 @@ class App extends Component {
         this.changeRankBy = this.changeRankBy.bind(this);
         this.onPlayerSelect = this.onPlayerSelect.bind(this);
         this.onPlayerRemoval = this.onPlayerRemoval.bind(this);
-
-        this.basicColumns = [
-            { key: 'name',  label: 'NAME' },
-            { key: 'pos',   label: 'POS' },
-            { key: 'pts',   label: 'PTS' },
-            { key: 'reb',   label: 'REB' },
-            { key: 'ast',   label: 'AST' },
-            { key: 'm3s',   label: '3PM' },
-            { key: 'stl',   label: 'STL' },
-            { key: 'blk',   label: 'BLK' },
-            { key: 'fg',    label: 'FG' },
-            { key: 'ft',    label: 'FT' },
-            { key: 'to',    label: 'TO' }
-        ];
     }
 
-    getPlayers() {
+    getPlayerData() {
         NProgress.start();
         axios.get(this.state.url)
             .then(resp => {
-                const players = resp.data.players;
-                const min = resp.data.min;
-                const max = resp.data.max;
-                this.setState({ players, min, max, selectedPlayer : players[0] });
+                const data = resp.data;
+                this.setState({ data, selectedPlayer : data.players[0] });
                 NProgress.done();
             })
             .catch(err => {
@@ -60,27 +48,26 @@ class App extends Component {
             });
     }
 
-    getRemovedPlayers() {
+    getRemovedPlayerIds() {
         axios.get('/removed_players')
             .then(resp => {
-                const removedPlayers = resp.data;
-                this.setState({ removedPlayers });
+                const removedPlayerIds = resp.data;
+                this.setState({ removedPlayerIds });
             });
     }
 
-    getDraftedPlayers() {
+    getDraftedPlayerIds() {
         axios.get('/drafted_players')
             .then(resp => {
-                const draftedPlayers = resp.data;
-                this.setState({ draftedPlayers });
+                const draftedPlayerIds = resp.data;
+                this.setState({ draftedPlayerIds });
             });
     }
 
     componentDidMount() {
-        this.getPlayers();
-        this.getRemovedPlayers();
-        this.getDraftedPlayers();
-        // TODO: get drafted_players
+        this.getPlayerData();
+        this.getRemovedPlayerIds();
+        this.getDraftedPlayerIds();
     }
 
     updateUrl() {
@@ -90,9 +77,9 @@ class App extends Component {
     onPlayerDraft(player) {
         axios.post('/drafted_players', player)
             .then(resp => {
-                let draftedPlayers = this.state.draftedPlayers;
-                draftedPlayers.push(player);
-                this.setState({ draftedPlayers })
+                let draftedPlayerIds = this.state.draftedPlayerIds;
+                draftedPlayerIds.push(player);
+                this.setState({ draftedPlayerIds })
                 this.onPlayerRemoval(player.id);
             });
     }
@@ -100,13 +87,13 @@ class App extends Component {
     selectOption(selectedMenu) {
         this.setState({ selectedMenu });
         this.updateUrl();
-        this.getPlayers();
+        this.getPlayerData();
     }
 
     changeRankBy(event) {
         this.setState({selectedRankBy: event.target.value})
         this.updateUrl();
-        this.getPlayers();
+        this.getPlayerData();
     }
 
     onPlayerSelect(selectedPlayer) {
@@ -116,9 +103,9 @@ class App extends Component {
     onPlayerRemoval(player_id) {
         axios.post('/removed_players', {player_id})
             .then(resp => {
-                let removedPlayers = this.state.removedPlayers;
-                removedPlayers.push(player_id);
-                this.setState({ removedPlayers });
+                let removedPlayerIds = this.state.removedPlayerIds;
+                removedPlayerIds.push(player_id);
+                this.setState({ removedPlayerIds });
             });
     }
 
@@ -131,31 +118,24 @@ class App extends Component {
                             onSelect={this.selectOption}
                             onChangeRankBy={this.changeRankBy} />
                     <PlayerInfo player={this.state.selectedPlayer}
+                        min={this.state.data.min}
+                        max={this.state.data.max}
                         onPlayerDraft={this.onPlayerDraft}
-                        onPlayerRemoval={this.onPlayerRemoval}
-                        maxVal={this.state.max}
-                        minVal={this.state.min} />
+                        onPlayerRemoval={this.onPlayerRemoval} />
                     <div className="columns">
                         <div className="column is-7">
-                            <PlayersTable
-                                label="Stats"
-                                players={this.state.players}
-                                removedPlayers={this.state.removedPlayers}
+                            <AvailablePlayers
+                                data={this.state.data}
+                                removedPlayerIds={this.state.removedPlayerIds}
                                 onPlayerDraft={this.onPlayerDraft}
                                 onPlayerSelect={this.onPlayerSelect}
-                                onPlayerRemoval={this.onPlayerRemoval}
-                                maxVal={this.state.max}
-                                minVal={this.state.min} />
+                                onPlayerRemoval={this.onPlayerRemoval} />
                         </div>
                         <div className="column is-5">
-                            <PlayersTable
-                                label="Picked Players"
-                                players={this.state.draftedPlayers}
-                                removedPlayers={[]}
-                                onPlayerSelect={this.onPlayerSelect}
-                                columns={this.basicColumns}
-                                maxVal={this.state.max}
-                                minVal={this.state.min} />
+                            <DraftedPlayers
+                                data={this.state.data}
+                                draftedPlayerIds={this.state.draftedPlayerIds}
+                                onPlayerSelect={this.onPlayerSelect} />
                         </div>
                     </div>
                 </div>

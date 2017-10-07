@@ -85,9 +85,7 @@ const PlayersTable =
 
     columns = (columns) ? columns : defaultColumns;
 
-    const playerData = players.filter(player => {
-        return removedPlayers.indexOf(player.id) < 0;
-    }).map((player) => {
+    const playerData = players.map((player) => {
         return (
             <Tr key={player.id} onClick={() => onPlayerSelect(player)}>
                 <Td column='ctrl'>
