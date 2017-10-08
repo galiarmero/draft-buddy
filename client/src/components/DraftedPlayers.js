@@ -1,34 +1,46 @@
 import React from 'react';
 import PlayersTable from './PlayersTable';
 import { includePlayersWithIdsIn } from '../utils/PlayerFilters';
+import { BASIC_COLUMNS, NINE_CAT_KEYS } from '../constants/Columns';
+
+const getAverage = (players, prop) => {
+    let sum = players.reduce( (sum, player) => {
+        sum += parseFloat(player[prop]);
+        return sum;
+    }, 0);
+
+    return sum / players.length;
+}
+
+const getAverages = (players) => {
+    let averages = {
+        name: 'Averages',
+        pos: '-'
+    };
+
+    return NINE_CAT_KEYS.reduce( (averages, category) => {
+        averages[category] = getAverage(players, category);
+        return averages;
+    }, averages);
+}
 
 const DraftedPlayers = (props) => {
     const players = includePlayersWithIdsIn(props.draftedPlayerIds, props.data.players);
-    const min = props.data.min;
-    const max = props.data.max;
-    const onPlayerSelect = props.onPlayerSelect;
-    const basicColumns = [
-            { key: 'name',  label: 'NAME' },
-            { key: 'pos',   label: 'POS' },
-            { key: 'pts',   label: 'PTS' },
-            { key: 'reb',   label: 'REB' },
-            { key: 'ast',   label: 'AST' },
-            { key: 'm3s',   label: '3PM' },
-            { key: 'stl',   label: 'STL' },
-            { key: 'blk',   label: 'BLK' },
-            { key: 'fg',    label: 'FG' },
-            { key: 'ft',    label: 'FT' },
-            { key: 'to',    label: 'TO' }
-        ];
+
+    if (players.length > 0) {
+        players.push(getAverages(players));
+    }
 
     return (
-        <PlayersTable
-            label="Picked Players"
-            players={players}
-            onPlayerSelect={onPlayerSelect}
-            columns={basicColumns}
-            maxVal={max}
-            minVal={min} />
+        <div className={props.className}>
+            <PlayersTable
+                label="Picked Players"
+                players={players}
+                onPlayerSelect={props.onPlayerSelect}
+                columns={BASIC_COLUMNS}
+                maxes={props.data.max}
+                mins={props.data.min} />
+        </div>
     );
 }
 

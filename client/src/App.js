@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PlayersTable from './components/PlayersTable';
 import Menu from './components/Menu';
 import PlayerInfo from './components/PlayerInfo';
 import AvailablePlayers from './components/AvailablePlayers';
@@ -123,20 +122,18 @@ class App extends Component {
                         onPlayerDraft={this.onPlayerDraft}
                         onPlayerRemoval={this.onPlayerRemoval} />
                     <div className="columns">
-                        <div className="column is-7">
-                            <AvailablePlayers
-                                data={this.state.data}
-                                removedPlayerIds={this.state.removedPlayerIds}
-                                onPlayerDraft={this.onPlayerDraft}
-                                onPlayerSelect={this.onPlayerSelect}
-                                onPlayerRemoval={this.onPlayerRemoval} />
-                        </div>
-                        <div className="column is-5">
-                            <DraftedPlayers
-                                data={this.state.data}
-                                draftedPlayerIds={this.state.draftedPlayerIds}
-                                onPlayerSelect={this.onPlayerSelect} />
-                        </div>
+                        <AvailablePlayers
+                            data={this.state.data}
+                            removedPlayerIds={this.state.removedPlayerIds}
+                            onPlayerDraft={this.onPlayerDraft}
+                            onPlayerSelect={this.onPlayerSelect}
+                            onPlayerRemoval={this.onPlayerRemoval}
+                            className={"column is-7"} />
+                        <DraftedPlayers
+                            data={this.state.data}
+                            draftedPlayerIds={this.state.draftedPlayerIds}
+                            onPlayerSelect={this.onPlayerSelect}
+                            className={"column is-5"} />
                     </div>
                 </div>
             </section>

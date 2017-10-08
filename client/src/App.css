@@ -1,8 +1,12 @@
 body {
-  font-size: .9rem !important;
+  font-size: .85rem !important;
 }
 
 .button.is-very-small {
   border-radius: 1px;
   font-size: 0.5rem;
+}
+
+.table.is-narrow td {
+    padding: 0.2px !important;
 }
