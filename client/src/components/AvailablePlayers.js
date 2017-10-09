@@ -8,7 +8,7 @@ const AvailablePlayers = (props) => {
     return (
         <div className={props.className}>
             <PlayersTable
-                label="Stats"
+                label="Available Players"
                 players={players}
                 onPlayerDraft={props.onPlayerDraft}
                 onPlayerSelect={props.onPlayerSelect}

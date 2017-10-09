@@ -1,6 +1,17 @@
 const includePlayersWithIdsIn = (includedIds, players) => {
-    return players.filter( player => {
-        return (includedIds.indexOf(player.id) >= 0);
+    let numPlayers = players.length;
+
+    if (!numPlayers) {
+        return [];
+    }
+
+    return includedIds.map( includedPlayerId => {
+        for (let i = 0; i < numPlayers; i++) {
+            if (players[i].id == includedPlayerId) {
+                return players[i];
+            }
+        }
+        return {};
     });
 }
 

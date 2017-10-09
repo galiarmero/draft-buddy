@@ -51,7 +51,7 @@ router.get('/drafted_players', function(req, res, next) {
 
 router.post('/drafted_players', function(req, res, next) {
     var data = JSON.parse(fs.readFileSync('data/drafted_players.json', 'utf8'));
-    data.push(req.body);
+    data.push(req.body.player_id);
     fs.writeFileSync('data/drafted_players.json', JSON.stringify(data));
     res.status(204).send(JSON.stringify(data));
 });

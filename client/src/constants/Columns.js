@@ -5,7 +5,6 @@ const DEFAULT_COLUMNS = [
     { key: 'pos',   label: 'POS' },
     { key: 'team',  label: 'TEAM' },
     { key: 'gp',    label: 'GP' },
-    { key: 'mpg',   label: 'MPG' },
     { key: 'pts',   label: 'PTS' },
     { key: 'reb',   label: 'REB' },
     { key: 'ast',   label: 'AST' },
@@ -17,7 +16,7 @@ const DEFAULT_COLUMNS = [
     { key: 'to',    label: 'TO' }
 ];
 
-const NON_BASIC_COL_KEYS = ['ctrl', 'rnk', 'team', 'gp', 'mpg'];
+const NON_BASIC_COL_KEYS = ['ctrl', 'rnk', 'team', 'gp'];
 const BASIC_COLUMNS = DEFAULT_COLUMNS.filter( column => {
     return (NON_BASIC_COL_KEYS.indexOf(column.key) < 0);
 });

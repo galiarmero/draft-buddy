@@ -23,23 +23,23 @@ class App extends Component {
             removedPlayerIds: [],
             selectedMenu: 'proj',
             selectedRankBy: 'pergame',
-            url: '/proj/pergame',
-            selectedPlayer: {}
+            selectedPlayerId: 0
         }
 
         this.onPlayerDraft = this.onPlayerDraft.bind(this);
         this.selectOption = this.selectOption.bind(this);
-        this.changeRankBy = this.changeRankBy.bind(this);
+        this.onChangeRankBy = this.onChangeRankBy.bind(this);
         this.onPlayerSelect = this.onPlayerSelect.bind(this);
         this.onPlayerRemoval = this.onPlayerRemoval.bind(this);
     }
 
     getPlayerData() {
         NProgress.start();
-        axios.get(this.state.url)
+        let url = `/${this.state.selectedMenu}/${this.state.selectedRankBy}`;
+        axios.get(url)
             .then(resp => {
                 const data = resp.data;
-                this.setState({ data, selectedPlayer : data.players[0] });
+                this.setState({ data });
                 NProgress.done();
             })
             .catch(err => {
@@ -69,34 +69,30 @@ class App extends Component {
         this.getDraftedPlayerIds();
     }
 
-    updateUrl() {
-        this.setState({ url: `/${this.state.selectedMenu}/${this.state.selectedRankBy}` })
-    }
-
-    onPlayerDraft(player) {
-        axios.post('/drafted_players', player)
+    onPlayerDraft(player_id) {
+        axios.post('/drafted_players', {player_id})
             .then(resp => {
                 let draftedPlayerIds = this.state.draftedPlayerIds;
-                draftedPlayerIds.push(player);
+                draftedPlayerIds.push(player_id);
                 this.setState({ draftedPlayerIds })
-                this.onPlayerRemoval(player.id);
+                this.onPlayerRemoval(player_id);
             });
     }
 
     selectOption(selectedMenu) {
-        this.setState({ selectedMenu });
-        this.updateUrl();
-        this.getPlayerData();
+        this.setState({ selectedMenu }, () => {
+            this.getPlayerData();
+        });
     }
 
-    changeRankBy(event) {
-        this.setState({selectedRankBy: event.target.value})
-        this.updateUrl();
-        this.getPlayerData();
+    onChangeRankBy(event) {
+        this.setState({selectedRankBy: event.target.value}, () => {
+            this.getPlayerData();
+        });
     }
 
-    onPlayerSelect(selectedPlayer) {
-        this.setState({ selectedPlayer });
+    onPlayerSelect(selectedPlayerId) {
+        this.setState({ selectedPlayerId });
     }
 
     onPlayerRemoval(player_id) {
@@ -115,8 +111,10 @@ class App extends Component {
                     <Menu selectedMenu={this.state.selectedMenu}
                             selectedRankBy={this.state.selectedRankBy}
                             onSelect={this.selectOption}
-                            onChangeRankBy={this.changeRankBy} />
-                    <PlayerInfo player={this.state.selectedPlayer}
+                            onChangeRankBy={this.onChangeRankBy} />
+                    <PlayerInfo
+                        data={this.state.data}
+                        playerId={this.state.selectedPlayerId}
                         min={this.state.data.min}
                         max={this.state.data.max}
                         onPlayerDraft={this.onPlayerDraft}

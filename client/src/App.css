@@ -10,3 +10,7 @@ body {
 .table.is-narrow td {
     padding: 0.2px !important;
 }
+
+table > tbody > tr {
+    cursor: pointer;
+}

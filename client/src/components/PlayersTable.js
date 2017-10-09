@@ -11,10 +11,10 @@ const PlayersTable = (props) => {
 
     const playerData = players.map( player => {
         return (
-            <Tr key={player.id} onClick={() => props.onPlayerSelect(player)}>
+            <Tr key={player.id} onClick={() => props.onPlayerSelect(player.id)}>
                 <Td column='ctrl'>
                     <div className="field is-grouped">
-                        <a onClick={() => props.onPlayerDraft(player)} className='button is-very-small is-info'>+</a>
+                        <a onClick={() => props.onPlayerDraft(player.id)} className='button is-very-small is-info'>+</a>
                         <a onClick={() => props.onPlayerRemoval(player.id)} className='button is-very-small is-danger'>-</a>
                     </div>
                 </Td>
